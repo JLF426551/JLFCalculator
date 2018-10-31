@@ -2,238 +2,64 @@ package com.jl426551.example.mycalculator;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+import static com.jl426551.example.mycalculator.ButtonData.CLEAR;
+import static com.jl426551.example.mycalculator.ButtonData.DOUBLE_ZERO;
+import static com.jl426551.example.mycalculator.ButtonData.EQUALS;
+
+public class MainActivity extends AppCompatActivity implements ButtonDataAdapter.ButtonClickHandler {
 
     TextView displayView;
     TextView resultView;
     String mOperation;
-    Button zeroButton;
-    Button oneButton;
-    Button twoButton;
-    Button threeButton;
-    Button fourButton;
-    Button fiveButton;
-    Button sixButton;
-    Button sevenButton;
-    Button eightButton;
-    Button nineButton;
-    Button periodButton;
-    Button doubleZeroButton;
-    Button plusButton;
-    Button minusButton;
-    Button multiplyButton;
-    Button divideButton;
-    Button equalsButton;
-    Button openButton;
-    Button closeButton;
-    Button clearButton;
+    RecyclerView recyclerView;
+    GridLayoutManager manager;
+    ButtonDataAdapter adapter;
+    ArrayList<ButtonData> dataList;
 
-    View.OnClickListener oneListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('1');
-        }
-    };
-
-    View.OnClickListener twoListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('2');
-        }
-    };
-
-    View.OnClickListener threeListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('3');
-        }
-    };
-
-    View.OnClickListener fourListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('4');
-        }
-    };
-
-    View.OnClickListener fiveListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('5');
-        }
-    };
-
-    View.OnClickListener sixListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('6');
-        }
-    };
-
-    View.OnClickListener sevenListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('7');
-        }
-    };
-
-    View.OnClickListener eightListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('8');
-        }
-    };
-
-    View.OnClickListener nineListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('9');
-        }
-    };
-
-    View.OnClickListener zeroListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('0');
-        }
-    };
-
-    View.OnClickListener doubleZeroListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('0');
-            addCharacter('0');
-        }
-    };
-
-    View.OnClickListener periodListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('.');
-        }
-    };
-
-    View.OnClickListener plusListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('+');
-        }
-    };
-
-    View.OnClickListener minusListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('-');
-        }
-    };
-
-    View.OnClickListener multiplyListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('*');
-        }
-    };
-
-    View.OnClickListener divideListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-        }
-    };
-
-    View.OnClickListener openListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter('(');
-        }
-    };
-
-    View.OnClickListener closeListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addCharacter(')');
-        }
-    };
-
-    View.OnClickListener clearListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            clearOperation();
-        }
-    };
-
-    View.OnClickListener equalsListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            calculateOperation();
-        }
-    };
+    boolean clearDisplayPriorToType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_rv);
+
+        //Get fixed data since our ButtonData list will never change in this app.
+        dataList = ButtonData.getStaticButtonList();
 
         //Initialize Views
         resultView = findViewById(R.id.results_view);
         displayView = findViewById(R.id.input_view);
-        zeroButton = findViewById(R.id.button_zero);
-        oneButton = findViewById(R.id.button_one);
-        twoButton = findViewById(R.id.button_two);
-        threeButton = findViewById(R.id.button_three);
-        fourButton = findViewById(R.id.button_four);
-        fiveButton = findViewById(R.id.button_five);
-        sixButton = findViewById(R.id.button_six);
-        sevenButton = findViewById(R.id.button_seven);
-        eightButton = findViewById(R.id.button_eight);
-        nineButton = findViewById(R.id.button_nine);
-        periodButton = findViewById(R.id.button_period);
-        doubleZeroButton = findViewById(R.id.button_double_zero);
-        plusButton = findViewById(R.id.button_addition);
-        minusButton = findViewById(R.id.button_subtraction);
-        multiplyButton = findViewById(R.id.button_multiplication);
-        divideButton = findViewById(R.id.button_division);
-        equalsButton = findViewById(R.id.button_equals);
-        openButton = findViewById(R.id.button_open_parenthesis);
-        closeButton = findViewById(R.id.button_close_parenthesis);
-        clearButton = findViewById(R.id.button_backspace);
+        recyclerView = findViewById(R.id.my_recycler_view);
 
-        //set-up listeners
-        zeroButton.setOnClickListener(zeroListener);
-        oneButton.setOnClickListener(oneListener);
-        twoButton.setOnClickListener(twoListener);
-        threeButton.setOnClickListener(threeListener);
-        fourButton.setOnClickListener(fourListener);
-        fiveButton.setOnClickListener(fiveListener);
-        sixButton.setOnClickListener(sixListener);
-        sevenButton.setOnClickListener(sevenListener);
-        eightButton.setOnClickListener(eightListener);
-        nineButton.setOnClickListener(nineListener);
-        periodButton.setOnClickListener(periodListener);
-        doubleZeroButton.setOnClickListener(doubleZeroListener);
-        plusButton.setOnClickListener(plusListener);
-        minusButton.setOnClickListener(minusListener);
-        multiplyButton.setOnClickListener(multiplyListener);
-        divideButton.setOnClickListener(divideListener);
-        equalsButton.setOnClickListener(equalsListener);
-        openButton.setOnClickListener(openListener);
-        closeButton.setOnClickListener(closeListener);
-        clearButton.setOnClickListener(clearListener);
-
+        //Create a grid layout with 5 spans
+        manager = new GridLayoutManager(getBaseContext(), 5);
+        adapter = new ButtonDataAdapter(this, dataList);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(manager);
 
         mOperation = "";
+        clearDisplayPriorToType = false;
     }
 
-    private void addCharacter(char entered) {
+    //Adds a character to the calculator view to prepare it for operation.
+    public void addCharacter(char entered) {
+        if (clearDisplayPriorToType)
+            mOperation = "";
+
         mOperation += entered;
         updateDisplay();
+        clearDisplayPriorToType = false;
     }
 
     private void clearOperation() {
+        clearDisplayPriorToType = false;
         mOperation = "";
         updateDisplay();
     }
@@ -248,10 +74,33 @@ public class MainActivity extends AppCompatActivity {
             String mResult = Calculator.getResult(mOperation);
             resultView.setText(mResult);
             displayView.setText(mOperation);
+            clearDisplayPriorToType = true;
         } else {
             //Toast error message
+            Toast.makeText(this, "Improper input entered. Clearing field.", Toast.LENGTH_SHORT).show();
             clearOperation();
+            clearDisplayPriorToType = true;
         }
 
+    }
+
+    //Read from the ButtonDataAdapter.
+    @Override
+    public void onButtonSelected(int charOption) {
+        switch (charOption) {
+            case CLEAR:
+                clearOperation();
+                break;
+            case EQUALS:
+                calculateOperation();
+                break;
+            case DOUBLE_ZERO:
+                addCharacter('0');
+                addCharacter('0');
+                break;
+            //Since our list does not change a one-to-one value to position matches characters listed.
+            default:
+                addCharacter(dataList.get(charOption).getDisplayValue().charAt(0));
+        }
     }
 }

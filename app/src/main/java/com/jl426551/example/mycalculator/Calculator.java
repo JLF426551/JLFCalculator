@@ -29,7 +29,6 @@ public class Calculator {
     }
 
     public static String getResult(String operation) {
-        System.out.println("getResult called with " + operation);
         double totalValue;
 
         // * * * * * * * * Calculate exponents * * * * * * * *
@@ -47,12 +46,6 @@ public class Calculator {
             if (openIndex == -1 || closingIndex == -1) {
                 System.out.println("No parenthesis found");
             } else {
-                System.out.println("Open index at " + openIndex);
-                System.out.println("Closing index at " + closingIndex);
-                System.out.println("split: + \n");
-                System.out.println(modifiedOperation.substring(0, openIndex));
-                System.out.println(modifiedOperation.substring(closingIndex + 1, modifiedOperation.length()));
-
                 modifiedOperation = modifiedOperation.substring(0, openIndex) + getResult(modifiedOperation.substring(openIndex + 1, closingIndex)) + modifiedOperation.substring(closingIndex + 1, modifiedOperation.length());
             }
 
@@ -93,10 +86,6 @@ public class Calculator {
             }
 
         }
-
-        //System.out.print("String after multiplication ");
-        //System.out.println(modifiedOperation + "\n");
-
 
         //Complete addition substraction operations.
         boolean asFound = true;
@@ -140,12 +129,10 @@ public class Calculator {
         }
 
         //Return value
-//        System.out.println("Returning " + modifiedOperation);
         return modifiedOperation;
     }
 
     public static String CompleteMultiplicaton(String computation) {
-        System.out.println("cMultiply with " + computation);
         int mulIndex = computation.indexOf('*');
 
         //scan left to find first non-number character.
@@ -191,11 +178,6 @@ public class Calculator {
 
         double rightNumber = Double.parseDouble(computation.substring(mulIndex + 1, rightIndex));
 
-        //System.out.println("Left number read as " + leftNumber);
-        //System.out.println("Right number read as " + rightNumber);
-
-        //System.out.println("Modifying result string");
-
         //Perform operation
         rightNumber *= leftNumber;
 
@@ -208,7 +190,6 @@ public class Calculator {
     }
 
     public static String CompleteDivision(String computation) {
-        System.out.println("cDivision with " + computation);
         int mulIndex = computation.indexOf('/');
 
         //scan left to find first non-number character.
@@ -223,8 +204,6 @@ public class Calculator {
         }
 
         //Negative value adjustments.
-        //        System.out.println("left index read at " + leftIndex);
-        //        System.out.println("mul index " + mulIndex);
         //The very first character is a negative.
         if (leftIndex == 0 && computation.charAt(leftIndex) == '-')
             leftIndex = -1;
@@ -256,24 +235,16 @@ public class Calculator {
 
         double rightNumber = Double.parseDouble(computation.substring(mulIndex + 1, rightIndex));
 
-        //System.out.println("Left number read as " + leftNumber);
-        //System.out.println("Right number read as " + rightNumber);
-
-        //System.out.println("Modifying result string");
-
         //Perform operation
         rightNumber = leftNumber / rightNumber;
 
         //Break and re-assemble string
         String modifiedString = computation.substring(0, leftIndex + 1) + rightNumber + computation.substring(rightIndex, computation.length());
-        //System.out.println("Newly modified string is   ");
-        //System.out.print( modifiedString);
 
         return modifiedString;
     }
 
     public static String CompleteAddition(String computation) {
-        System.out.println("CAddiTION with " + computation);
         int mulIndex = computation.indexOf('+');
 
         //scan left to find first non-number character.
@@ -288,8 +259,7 @@ public class Calculator {
         }
 
         //Negative value adjustments.
-        //       System.out.println("left index read at " + leftIndex);
-        //       System.out.println("mul index " + mulIndex);
+
         //The very first character is a negative.
         if (leftIndex == 0 && computation.charAt(leftIndex) == '-')
             leftIndex = -1;
@@ -321,24 +291,16 @@ public class Calculator {
 
         double rightNumber = Double.parseDouble(computation.substring(mulIndex + 1, rightIndex));
 
-        //System.out.println("Left number read as " + leftNumber);
-        //System.out.println("Right number read as " + rightNumber);
-
-        //System.out.println("Modifying result string");
-
         //Perform operation
         rightNumber += leftNumber;
 
         //Break and re-assemble string
         String modifiedString = computation.substring(0, leftIndex + 1) + rightNumber + computation.substring(rightIndex, computation.length());
-        //System.out.println("Newly modified string is   ");
-        //System.out.print( modifiedString);
 
         return modifiedString;
     }
 
     public static String CompleteSubstraction(String computation) {
-        System.out.println("Substraction with " + computation);
         int mulIndex = computation.indexOf('-');
 
         if (mulIndex == 0) {
@@ -358,10 +320,6 @@ public class Calculator {
                 leftFound = true;
         }
 
-        //Negative value adjustments.
-        //System.out.println("left index read at " + leftIndex);
-        //System.out.println("mul index " + mulIndex);
-
         //The very first character is a negative.
         if (leftIndex == 0 && computation.charAt(leftIndex) == '-')
             leftIndex = -1;
@@ -393,11 +351,6 @@ public class Calculator {
 
         double rightNumber = Double.parseDouble(computation.substring(mulIndex + 1, rightIndex));
 
-        //System.out.println("Left number read as " + leftNumber);
-        //System.out.println("Right number read as " + rightNumber);
-
-        //System.out.println("Modifying result string");
-
         //Perform operation
         rightNumber = leftNumber - rightNumber;
 
@@ -410,7 +363,6 @@ public class Calculator {
     }
 
     private static boolean isNotANumber(char character) {
-        //System.out.println("Checking not a number for " + character);
 
         if (character == '/' || character == '+' || character == '*' || character == '-')
             return true;
